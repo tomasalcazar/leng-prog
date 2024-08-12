@@ -1,54 +1,79 @@
-module Lists (member, union, intersection, difference,
-              insert, insertionSort,
-              binaryToDecimal, toDecimal, toDec, decimal,
-              binaryAdd) where
-  
-import Data.Char(digitToInt)  
+module Lists (
+    member, union, intersection, difference,
+    insert, insertionSort,
+    binaryToDecimal, toDecimal, toDec, decimal,
+    firsts, binaryAdd
+) where
 
-member:: Int -> [Int] -> Bool
+import Data.Char (digitToInt, intToDigit)
+
+-- List as Sets
+
+member :: Int -> [Int] -> Bool
 member _ []      = False
 member e (x:xs)  = e == x || member e xs
 
-
-union:: [Int] -> [Int] -> [Int]
+union :: [Int] -> [Int] -> [Int]
 union [] ys     = ys
-union (x:xs) ys 
+union (x:xs) ys
   | member x ys = union xs ys
   | otherwise   = x : union xs ys
 
--- Remove Implementations, from, here on
+intersection :: [Int] -> [Int] -> [Int]
+intersection [] _ = []
+intersection (x:xs) ys
+  | member x ys = x : intersection xs ys
+  | otherwise   = intersection xs ys
 
-intersection:: [Int] -> [Int] -> [Int]
-intersection = error "Implement it"
+difference :: [Int] -> [Int] -> [Int]
+difference [] _ = []
+difference (x:xs) ys
+  | member x ys = difference xs ys
+  | otherwise   = x : difference xs ys
 
-difference:: [Int] -> [Int] -> [Int]
-difference  = error "Implement it"
+-- Insertion Sort
 
-insert:: Int -> [Int] -> [Int]
-insert = error "Implement it"
+insert :: Int -> [Int] -> [Int]
+insert e [] = [e]
+insert e (x:xs)
+  | e <= x    = e : x : xs
+  | otherwise = x : insert e xs
 
 insertionSort :: [Int] -> [Int]
-insertionSort = error "Implement it"
+insertionSort = foldr insert []
+
+-- Numeral Systems
 
 binaryToDecimal :: [Int] -> Int
-binaryToDecimal = error "Implement it"
-    
+binaryToDecimal = foldl (\acc x -> acc * 2 + x) 0
+
 toDecimal :: Int -> [Int] -> Int
-toDecimal = error "Implement it"
-    
-toDec::Int -> String -> Int
-toDec base s =  = error "Implement it"
+toDecimal base = foldl (\acc x -> acc * base + x) 0
 
--- Same as `toDec` But use a list comprehension
+toDec :: Int -> String -> Int
+toDec base s = toDecimal base (map digitToInt s)
 
-decimal::Int -> String -> Int
-decimal  = error "Implement it"
+decimal :: Int -> String -> Int
+decimal base s = sum [digitToInt x * base^i | (x, i) <- zip (reverse s) [0..]]
 
-firsts::[a] -> [[a]]
-firsts = error "Implement it"
+-- Firsts Elements of a List
 
--- Given two String that represents numbers in binary implement the 'binaryAdd' function
--- DO NOT USE a predefined '+' operation
+firsts :: [a] -> [[a]]
+firsts [] = []
+firsts xs = [take n xs | n <- [1..length xs]]
 
-binaryAdd::String -> String -> String
-binaryAdd  = error "Implement it"
+-- Binary Operations – BONUS exercise
+
+binaryAdd :: String -> String -> String
+binaryAdd "" "" = "0"  -- Handle the case where both inputs are empty
+binaryAdd xs ys = reverse (addBinary (reverse xs) (reverse ys) '0')
+
+addBinary :: String -> String -> Char -> String
+addBinary [] [] carry = if carry == '1' then [carry] else []
+addBinary (x:xs) [] carry = addBinary (x:xs) "0" carry
+addBinary [] (y:ys) carry = addBinary "0" (y:ys) carry
+addBinary (x:xs) (y:ys) carry
+  | sum == 2  = '0' : addBinary xs ys '1'
+  | sum == 3  = '1' : addBinary xs ys '1'
+  | otherwise = intToDigit sum : addBinary xs ys '0'
+  where sum = digitToInt x + digitToInt y + digitToInt carry

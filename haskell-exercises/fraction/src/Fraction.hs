@@ -24,6 +24,6 @@ divide :: Fraction -> Fraction -> Fraction
 divide (n1, d1) (n2, d2) = (n1 * d2, d1 * n2)
 
 -- Implement the `hcf` Function
-hcf :: Int -> Int -> Int
+hcf :: Int -> Int -> Int /highest common factor/
 hcf a 0 = a
 hcf a b = hcf b (a `mod` b)
