@@ -2,8 +2,8 @@ module Lists (
     member, union, intersection, difference,
     insert, insertionSort,
     binaryToDecimal, toDecimal, toDec, decimal,
-    firsts, binaryAdd
-) where
+    firsts, binaryAdd, merge, mergeSort
+) where  -- Fix the misplaced closing parenthesis here
 
 import Data.Char (digitToInt, intToDigit)
 
@@ -25,7 +25,7 @@ intersection (x:xs) ys
   | member x ys = x : intersection xs ys
   | otherwise   = intersection xs ys
 
-difference :: [Int] -> [Int] -> [Int]
+difference :: [Int] -> [Int] -> [Int]  -- Example: difference [1, 2, 3, 4] [3, 4, 5, 6] = [1, 2]
 difference [] _ = []
 difference (x:xs) ys
   | member x ys = difference xs ys
@@ -40,7 +40,8 @@ insert e (x:xs)
   | otherwise = x : insert e xs
 
 insertionSort :: [Int] -> [Int]
-insertionSort = foldr insert []
+insertionSort [] = []
+insertionSort (x:xs) = insert x (insertionSort xs)
 
 -- Numeral Systems
 
@@ -77,3 +78,19 @@ addBinary (x:xs) (y:ys) carry
   | sum == 3  = '1' : addBinary xs ys '1'
   | otherwise = intToDigit sum : addBinary xs ys '0'
   where sum = digitToInt x + digitToInt y + digitToInt carry
+
+-- Merge Sort
+
+merge :: [Int] -> [Int] -> [Int]
+merge [] ys = ys
+merge xs [] = xs
+merge (x:xs) (y:ys)
+  | x <= y    = x : merge xs (y:ys)
+  | otherwise = y : merge (x:xs) ys
+
+mergeSort :: [Int] -> [Int]
+mergeSort [] = []
+mergeSort [x] = [x]
+mergeSort xs = merge (mergeSort left) (mergeSort right)
+  where
+    (left, right) = splitAt (length xs `div` 2) xs
