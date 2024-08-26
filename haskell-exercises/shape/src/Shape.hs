@@ -1,46 +1,45 @@
 module Shape where
 
-data Point = Point { x::Double, y:: Double} deriving (Eq, Show)
+data Point = Point { x :: Double, y :: Double } deriving (Eq, Show)
 
-data Circle    = Circle    Point Double deriving (Eq, Show)
+data Circle    = Circle Point Double deriving (Eq, Show)
 data Rectangle = Rectangle Point Point deriving (Eq, Show)
 
+point :: (Double, Double) -> Point
+point (x, y) = Point { x = x, y = y }
 
--- A point from a tuple Pair
-point::(Double, Double) -> Point
-point = error "Implement it"
+origin :: Point
+origin = Point { x = 0.0, y = 0.0 }
 
--- The origin
-origin::Point
-origin = error "Implement it"
+rectangle :: (Double, Double) -> Rectangle
+rectangle (x, y) = Rectangle origin (Point { x = x, y = y })
 
--- Rectangle from a Tuple where (x0 y0) == origin
-rectangle::(Double, Double) -> Rectangle
-rectangle = error "Implement it" 
+base :: Rectangle -> Double
+base (Rectangle (Point x0 _) (Point x1 _)) = abs (x1 - x0)
 
-base::Rectangle -> Double
-base = error "Implement it"
+height :: Rectangle -> Double
+height (Rectangle (Point _ y0) (Point _ y1)) = abs (y1 - y0)
 
-height::Rectangle -> Double
-height = error "Implement it"
-
--- Circle from radius
-circle::Double -> Circle
-circle = error "Implement it" 
-
--- Clase Shift
+circle :: Double -> Circle
+circle r = Circle origin r
 
 class Shift a where
-   shift::a -> (Double, Double) -> a
-   
+   shift :: a -> (Double, Double) -> a
+
 instance Shift Point where
-   shift  = error "Implement it"
-   
+   shift (Point x y) (dx, dy) = Point (x + dx) (y + dy)
+
 instance Shift Rectangle where
-   shift  = error "Implement it"
-   
+   shift (Rectangle p1 p2) (dx, dy) = Rectangle (shift p1 (dx, dy)) (shift p2 (dx, dy))
+
 instance Shift Circle where
-   shift  = error "Implement it"
-   
--- Define the Surface class
-   
+   shift (Circle center r) (dx, dy) = Circle (shift center (dx, dy)) r
+
+class Surface a where
+   surface :: a -> Double
+
+instance Surface Rectangle where
+   surface rect = base rect * height rect
+
+instance Surface Circle where
+   surface (Circle _ r) = pi * r * r
