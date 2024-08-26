@@ -9,7 +9,7 @@ main = hspec $ do
   describe "Binary Trie - Basic" $ do
     it "left" $ do
       left trie `shouldBe` (Leaf 'A' :-: Leaf 'B')
-      
+
     it "right" $ do
       right trie `shouldBe` Leaf 'C'
 
@@ -19,16 +19,16 @@ main = hspec $ do
   describe "find" $ do
     it "T -> A" $ do
       [T] `find` trie `shouldBe` 'C'
-      
+
     it "FT -> B" $ do
       [F, T] `find` trie `shouldBe` 'B'
 
   describe "decode" $ do
     it "FTFFFTFF -> BABA" $ do
-      [F, T, F, F, F, T, F, F] `decode` trie `shouldBe` "BABA" 
+      [F, T, F, F, F, T, F, F] `decode` trie `shouldBe` "BABA"
 
     it "TFFFTFF -> CABA" $ do
-      [T, F, F, F, T, F, F] `decode` trie `shouldBe` "CABA" 
+      [T, F, F, F, T, F, F] `decode` trie `shouldBe` "CABA"
 
   describe "toList" $ do
     it "(Leaf 'A' :-: Leaf 'B') :-: Leaf 'C'" $ do
