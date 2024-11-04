@@ -49,7 +49,6 @@ instance Queue BQueue where
 
     fromList xs = BQueue xs []
 
-
 -- Ejercicio 4 --
 
 instance (Show a) => Show (BQueue a) where

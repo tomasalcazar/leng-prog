@@ -4,38 +4,57 @@ pub enum Error {
     FullBuffer,
 }
 
-pub struct CircularBuffer<T:Clone> {
+pub struct CircularBuffer<T: Clone> {
     buffer: Vec<Option<T>>,
     size: usize,
-    next: usize,
+    head: usize,
+    tail: usize,
 }
 
-impl<T:Clone> CircularBuffer<T> {
+impl<T: Clone> CircularBuffer<T> {
     pub fn new(size: usize) -> CircularBuffer<T> {
         CircularBuffer {
             buffer: vec![None; size],
             size: 0,
-            next: 0,
+            head: 0,
+            tail: 0,
         }
     }
 
     pub fn read(&mut self) -> Result<T, Error> {
-        todo!()
+        if self.is_empty() {
+            Err(Error::EmptyBuffer)
+        } else {
+            let value = self.buffer[self.head].take().unwrap();
+            self.head = (self.head + 1) % self.buffer.len();
+            self.size -= 1;
+            Ok(value)
+        }
     }
 
     pub fn write(&mut self, byte: T) -> Result<(), Error> {
-        todo!()
+        if self.is_full() {
+            Err(Error::FullBuffer)
+        } else {
+            self.buffer[self.tail] = Some(byte);
+            self.tail = (self.tail + 1) % self.buffer.len();
+            self.size += 1;
+            Ok(())
+        }
     }
 
     pub fn clear(&mut self) {
-        todo!()
+        self.buffer = vec![None; self.buffer.len()];
+        self.size = 0;
+        self.head = 0;
+        self.tail = 0;
     }
 
     pub fn is_empty(&self) -> bool {
-        todo!()
+        self.size == 0
     }
 
     pub fn is_full(&self) -> bool {
-        todo!()
+        self.size == self.buffer.len()
     }
 }
